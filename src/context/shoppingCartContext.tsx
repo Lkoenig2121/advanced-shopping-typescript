@@ -27,18 +27,18 @@ export function useShoppingCart (props: IuseShoppingCartProps) {
 // Anytime you use a provider the provider needs to have children
 export function ShoppingCartProvider({ children }: IuseShoppingCartProps) {
 
-    const [cartItems, setCartItems] = useState<CartItem[]>([])
+    const [cartItems, setCartItems] = useState<CartItem[] | undefined>([])
 
     function getItemQuantity(id: number) {
-        return cartItems.find(item => item.id === id)?.quantity || 0
+        return cartItems && cartItems.find(item => item.id === id)?.quantity || 0
     }
 
     function increaseCartQuantity(id: number) {
         setCartItems(currItems => {
-            if (currItems.find(item => item.id === id) == null) {
+            if (currItems && currItems.find(item => item.id === id) == null) {
                 return [...currItems, { id, quantity: 1}]
             } else {
-                currItems.map(item => {
+                currItems && currItems.map(item => {
                     if (item.id === id) {
                         return { ...item, quantity: item.quantity + 1}
                     } else {
@@ -51,10 +51,10 @@ export function ShoppingCartProvider({ children }: IuseShoppingCartProps) {
 
     function decreaseCartQuantity(id: number) {
         setCartItems(currItems => {
-            if (currItems.find(item => item.id === id)?.quantity === 1) {
+            if (currItems && currItems.find(item => item.id === id)?.quantity === 1) {
                 return currItems.filter(item => item.id !== id)
             } else {
-                currItems.map(item => {
+                currItems && currItems.map(item => {
                     if (item.id === id) {
                         return { ...item, quantity: item.quantity - 1}
                     } else {
@@ -67,7 +67,7 @@ export function ShoppingCartProvider({ children }: IuseShoppingCartProps) {
 
     function removeFromCart(id: number) {
         setCartItems(currItems => {
-            return currItems.filter(item => item.id !== id)
+            return currItems && currItems.filter(item => item.id !== id)
         })
     } 
 
